@@ -11,6 +11,7 @@ const oldTasks = localStorage.getItem("tasks");
 
 const App = () => {
   const [tasks, setTasks] = useState(JSON.parse(oldTasks) || []);
+  const [draggedTask, setDraggedTask] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -20,6 +21,14 @@ const App = () => {
     const newTasks = tasks.filter((task, index) => index !== taskIndex);
     setTasks(newTasks);
   };
+
+  const onDrop = (status, position) =>{
+    if(draggedTask === null|| draggedTask === undefined) return;
+    const draggedTaskData = tasks[draggedTask];
+    const newTasks = tasks.filter((task, index) => index !== draggedTask);
+    newTasks.splice(position, 0, {...draggedTaskData, status});
+    setTasks(newTasks);
+  }
 
   return (
     <div className="app">
@@ -31,6 +40,8 @@ const App = () => {
           tasks={tasks}
           status="todo"
           handleDelete={handleDelete}
+          setDraggedTask={setDraggedTask}
+          onDrop={onDrop}
         />
         <TaskColumn
           title="Doing"
@@ -38,6 +49,8 @@ const App = () => {
           tasks={tasks}
           status="doing"
           handleDelete={handleDelete}
+          setDraggedTask={setDraggedTask}
+          onDrop={onDrop}
         />
         <TaskColumn
           title="Done"
@@ -45,6 +58,8 @@ const App = () => {
           tasks={tasks}
           status="done"
           handleDelete={handleDelete}
+          setDraggedTask={setDraggedTask}
+          onDrop={onDrop}
         />
       </main>
     </div>
